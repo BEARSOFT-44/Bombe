@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://bearsoft44.fr"><img src="images/banniere-bearsoft44.png" alt="Logo Bearsoft 44" width="420"></a>
+  <a href="https://bearsoft44.fr"><img src="images/banniere-bearsoft44-v2.png" alt="Logo Bearsoft 44" width="420"></a>
 </p>
 
 <h1 align="center">La Bombe – Bearsoft 44</h1>
