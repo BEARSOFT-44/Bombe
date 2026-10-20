@@ -1,0 +1,374 @@
+<title>Simulateur Bombe V2.1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Mise en page : boîtier de la bombe à gauche (écran, LEDs, boutons), pupitre de test à droite (temps, journal). Un seul thème sombre, assumé : c'est un appareil. */
+:root {
+  --fond: #12140f;
+  --fond-2: #1a1d16;
+  --boitier: #2b3024;
+  --boitier-bord: #3c4332;
+  --trait: #3a4030;
+  --texte: #e4e6dc;
+  --texte-2: #a3a894;
+  --texte-3: #787d6a;
+  --accent: #d9b44a;
+  --accent-fond: #3b3420;
+  --rouge: #e0473c;
+  --bleu: #3f7fe0;
+  --ok: #d9b44a;
+  --pixel: #eaf3ff;
+  --ecran: #05070a;
+  --f-titre: "Chakra Petch", "Bahnschrift", "Arial Narrow", sans-serif;
+  --f-texte: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-donnee: "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { background: var(--fond); color: var(--texte); }
+body { font-family: var(--f-texte); font-size: 15px; line-height: 1.45; }
+.page { max-width: 1120px; margin: 0 auto; padding-block: 20px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
+h1 { font-family: var(--f-titre); font-weight: 700; font-size: 1.6rem; letter-spacing: 0.02em; margin: 0; text-wrap: balance; }
+h1 span { color: var(--accent); }
+.version { font-family: var(--f-donnee); font-size: 0.75rem; color: var(--texte-3); }
+.grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .grille { grid-template-columns: minmax(0, 1fr); } }
+
+/* ── Boîtier ── */
+.boitier { background: linear-gradient(180deg, var(--boitier), #23271d); border: 1px solid var(--boitier-bord); border-radius: 14px; padding: clamp(14px, 3vw, 28px); display: grid; gap: 22px; justify-items: center; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 12px 30px rgba(0,0,0,0.35); }
+.etiquette { font-family: var(--f-titre); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--texte-3); }
+.ecran-cadre { width: 100%; max-width: 560px; background: #0b0d0a; border-radius: 8px; padding: 10px; border: 1px solid #000; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); display: grid; gap: 6px; }
+canvas#ecran { width: 100%; aspect-ratio: 2 / 1; max-width: 100%; image-rendering: pixelated; image-rendering: crisp-edges; background: var(--ecran); display: block; border-radius: 2px; }
+.ecran-pied { display: flex; justify-content: space-between; gap: 10px; font-family: var(--f-donnee); font-size: 0.7rem; color: var(--texte-3); }
+.leds { display: flex; gap: clamp(6px, 1.6vw, 14px); padding: 10px 14px; background: #0d0f0b; border-radius: 999px; border: 1px solid #000; max-width: 100%; flex-wrap: wrap; justify-content: center; }
+.led { width: clamp(16px, 3.2vw, 24px); aspect-ratio: 1; border-radius: 50%; background: #1c1f19; border: 1px solid #000; transition: background-color 40ms linear, box-shadow 40ms linear; }
+.rangee { display: flex; align-items: flex-start; justify-content: center; gap: clamp(10px, 4vw, 40px); flex-wrap: wrap; width: 100%; }
+.bouton-bloc { display: grid; justify-items: center; gap: 8px; }
+.bp { --c: var(--ok); width: clamp(58px, 17vw, 84px); aspect-ratio: 1; border-radius: 50%; border: 3px solid #111; cursor: pointer; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 80%, white), var(--c) 45%, color-mix(in srgb, var(--c) 55%, black)); box-shadow: 0 6px 0 color-mix(in srgb, var(--c) 35%, black), 0 8px 14px rgba(0,0,0,0.5); touch-action: none; user-select: none; -webkit-user-select: none; font-family: var(--f-titre); font-weight: 700; font-size: 0.95rem; color: rgba(0,0,0,0.6); transition: transform 50ms, box-shadow 50ms; }
+.bp.appuye { transform: translateY(5px); box-shadow: 0 1px 0 color-mix(in srgb, var(--c) 35%, black), 0 2px 6px rgba(0,0,0,0.5); filter: brightness(1.12); }
+.bp:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.bp.rouge { --c: var(--rouge); } .bp.bleu { --c: var(--bleu); }
+.bp-nom { font-family: var(--f-donnee); font-size: 0.72rem; color: var(--texte-2); text-align: center; line-height: 1.3; }
+.bp-nom small { color: var(--texte-3); font-size: 0.66rem; }
+.verrou { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--texte-2); cursor: pointer; }
+.verrou input { accent-color: var(--accent); }
+.buzzer { display: flex; align-items: center; gap: 10px; font-family: var(--f-titre); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--texte-3); }
+.buzzer i { width: 34px; height: 34px; border-radius: 50%; background: repeating-radial-gradient(circle, #111 0 2px, #2a2e24 2px 4px); border: 2px solid #000; display: block; transition: box-shadow 30ms; }
+.buzzer.actif { color: var(--accent); }
+.buzzer.actif i { box-shadow: 0 0 0 4px var(--accent-fond), 0 0 18px 4px rgba(217,180,74,0.55); }
+
+/* ── Pupitre ── */
+.pupitre { display: grid; gap: 14px; min-width: 0; }
+.carte { background: var(--fond-2); border: 1px solid var(--trait); border-radius: 10px; padding: 14px 16px; display: grid; gap: 12px; min-width: 0; }
+.carte h2 { font-family: var(--f-titre); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; margin: 0; color: var(--texte-2); }
+.horloge { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.horloge b { font-family: var(--f-donnee); font-size: 2rem; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.horloge small { font-family: var(--f-donnee); font-size: 0.72rem; color: var(--texte-3); }
+.vitesses { display: flex; flex-wrap: wrap; gap: 6px; }
+.puce { font-family: var(--f-donnee); font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--trait); background: transparent; color: var(--texte-2); cursor: pointer; font-variant-numeric: tabular-nums; }
+.puce:hover { border-color: var(--texte-3); color: var(--texte); }
+.puce[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #1a1505; font-weight: 600; }
+.puce:focus-visible, .action:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.action { font-family: var(--f-texte); font-weight: 600; font-size: 0.85rem; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--trait); background: #23271d; color: var(--texte); cursor: pointer; }
+.action:hover { background: #2c3125; }
+.action.principale { background: var(--accent-fond); border-color: #5c5030; color: var(--accent); }
+.reglage { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.88rem; color: var(--texte-2); flex-wrap: wrap; }
+select { font-family: var(--f-donnee); font-size: 0.8rem; background: #23271d; color: var(--texte); border: 1px solid var(--trait); border-radius: 6px; padding: 5px 8px; }
+.alerte { font-size: 0.8rem; color: var(--accent); }
+.journal { font-family: var(--f-donnee); font-size: 0.76rem; max-height: 260px; overflow-y: auto; display: grid; gap: 2px; align-content: start; font-variant-numeric: tabular-nums; }
+.journal div { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 8px; color: var(--texte-2); }
+.journal div span:first-child { color: var(--texte-3); }
+.journal .bip span:last-child { color: var(--accent); }
+.journal .appui span:last-child { color: var(--texte); }
+.journal .vide { display: block; color: var(--texte-3); font-family: var(--f-texte); font-size: 0.85rem; }
+.aide { font-size: 0.85rem; color: var(--texte-2); display: grid; gap: 6px; }
+.aide p { margin: 0; }
+kbd { font-family: var(--f-donnee); font-size: 0.75rem; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--trait); border-bottom-width: 2px; background: #23271d; color: var(--texte); }
+@media (prefers-reduced-motion: reduce) { .bp, .led, .buzzer i { transition: none; } }
+</style>
+
+<div class="page">
+  <header>
+    <h1>Bombe <span>V2.1</span> · banc de test</h1>
+    <div class="version" id="version"></div>
+  </header>
+
+  <div class="grille">
+    <section class="boitier" aria-label="Bombe simulée">
+      <div class="ecran-cadre">
+        <canvas id="ecran" width="128" height="64" aria-label="Écran OLED 128×64"></canvas>
+        <div class="ecran-pied"><span>OLED SSD1306 128×64</span><span id="ecran-etat"></span></div>
+      </div>
+      <div class="leds" id="leds" aria-label="Bandeau LED"></div>
+      <div class="rangee" id="boutons"></div>
+      <div class="buzzer" id="buzzer"><i></i><span>Buzzer</span></div>
+    </section>
+
+    <aside class="pupitre">
+      <div class="carte">
+        <h2>Temps de la bombe</h2>
+        <div class="horloge"><b id="horloge">00:00.0</b><small id="horloge-ms">millis() = 0</small></div>
+        <div class="vitesses" id="vitesses" role="group" aria-label="Vitesse du temps"></div>
+        <div class="actions">
+          <button class="action principale" id="pause">Pause</button>
+          <button class="action" id="avance1">+1 min</button>
+          <button class="action" id="avance10">+10 min</button>
+          <button class="action" id="redemarrer">Rallumer la bombe</button>
+        </div>
+        <div class="reglage"><label for="periode">Durée d'un tour de loop()</label>
+          <select id="periode"><option value="1">1 ms</option><option value="5">5 ms</option><option value="10">10 ms</option><option value="20" selected>20 ms</option><option value="50">50 ms</option></select></div>
+        <div class="reglage"><label for="couleur">Couleur de l'écran</label>
+          <select id="couleur"><option value="blanc">Blanc</option><option value="bleu">Bleu</option><option value="bicolore">Jaune et bleu</option></select></div>
+        <div class="reglage"><label for="son">Son du buzzer</label>
+          <select id="son"><option value="on">Activé</option><option value="off">Coupé</option></select></div>
+        <div class="alerte" id="alerte" hidden>Le navigateur ne suit pas cette vitesse : le temps avance moins vite que demandé.</div>
+      </div>
+
+      <div class="carte">
+        <h2>Journal</h2>
+        <div class="journal" id="journal"><span class="vide">Les appuis et les bips apparaîtront ici, avec l'heure de la bombe.</span></div>
+        <div class="actions"><button class="action" id="vider">Vider le journal</button></div>
+      </div>
+
+      <div class="carte aide">
+        <h2>Utilisation</h2>
+        <p>Maintenez un bouton avec la souris ou le doigt, comme sur la vraie bombe. Clavier : <kbd>←</kbd> gauche, <kbd>→</kbd> droite, <kbd>Entrée</kbd> ou <kbd>Espace</kbd> OK.</p>
+        <p>« Bloquer » garde le bouton enfoncé, pratique pour une capture longue en vitesse rapide.</p>
+        <p>C'est le vrai code du .ino qui tourne ici, compilé avec les vraies bibliothèques U8g2 et EasyButton.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const CONFIG = "__CONFIG__";
+const $ = (id) => document.getElementById(id);
+const VITESSES = [0.5, 1, 2, 5, 10, 30, 60, 120];
+const BUDGET_TOURS = 25000;              // tours de loop() maximum par image affichée
+
+let wasm, mem, vitesse = 1, enPause = false, periode = 20;
+let tempsVirtuel = 0, prochainTour = 0, dernierRAF = null;
+let ecranVu = -1, couleurEcran = 'blanc', sonActif = true;
+let buzzerAvant = 0, debutBip = 0, buzzerPendantImage = false, ligneBip = null;
+const appuyes = new Map();               // broche -> appui en cours (souris, doigt, clavier ou verrou)
+const sources = new Map();               // broche -> Set des sources qui maintiennent le bouton
+
+// ── Chargement du programme ──
+function octets(b64) { const s = atob(b64); const a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+const module = new WebAssembly.Module(octets(CONFIG.wasm));
+
+function allumer() {
+  wasm = new WebAssembly.Instance(module, { env: {} }).exports;
+  mem = wasm.memory;
+  wasm.sim_init((Math.random() * 2 ** 31) >>> 0 || 1);
+  for (const b of CONFIG.boutons) wasm.sim_entree(b.broche, appuyes.get(b.broche) ? 0 : 1);
+  wasm.sim_setup();
+  tempsVirtuel = 0; prochainTour = wasm.sim_temps(); buzzerAvant = 0; ligneBip = null; ecranVu = -1;
+  journal('Bombe allumée (setup terminé à ' + fmt(wasm.sim_temps()) + ')', 'info', 0);
+  dessiner();
+}
+
+// ── Temps ──
+function tour() {
+  if (wasm.sim_temps() < prochainTour) wasm.sim_regler_temps(prochainTour);
+  wasm.sim_loop();
+  const t = wasm.sim_temps();
+  prochainTour = t + periode;
+  if (CONFIG.buzzer != null) {
+    const b = new Uint8Array(mem.buffer, wasm.sim_adr_broches(), 80)[CONFIG.buzzer];
+    if (b) buzzerPendantImage = true;
+    if (b && !buzzerAvant) { debutBip = t; ligneBip = journal('Bip…', 'bip', t); }
+    if (!b && buzzerAvant && ligneBip) { ligneBip.lastChild.textContent = 'Bip de ' + (t - debutBip) + ' ms'; ligneBip = null; }
+    buzzerAvant = b;
+  }
+}
+function avancer(ms) {
+  const fin = tempsVirtuel + ms;
+  while (prochainTour <= fin) tour();
+  tempsVirtuel = fin; dessiner();
+}
+function image(maintenant) {
+  if (dernierRAF !== null && !enPause) {
+    const dt = Math.min(maintenant - dernierRAF, 100) * vitesse;
+    tempsVirtuel += dt;
+    let n = 0;
+    while (prochainTour <= tempsVirtuel && n < BUDGET_TOURS) { tour(); n++; }
+    const ralenti = n >= BUDGET_TOURS;
+    if (ralenti) tempsVirtuel = prochainTour;
+    $('alerte').hidden = !ralenti;
+  }
+  dernierRAF = maintenant;
+  dessiner();
+  if (actif) requestAnimationFrame(image);
+}
+
+// ── Affichage ──
+const ctx = $('ecran').getContext('2d');
+const img = ctx.createImageData(128, 64);
+const COULEURS = { blanc: [234, 243, 255], bleu: [92, 196, 255], jaune: [255, 214, 64] };
+function dessiner() {
+  if (!wasm) return;
+  const n = wasm.sim_ecran_images();
+  if (n !== ecranVu) {
+    ecranVu = n;
+    const ram = new Uint8Array(mem.buffer, wasm.sim_adr_ecran(), 1024);
+    const eteint = wasm.sim_ecran_eteint();
+    for (let y = 0; y < 64; y++) {
+      const c = couleurEcran === 'bicolore' ? (y < 16 ? COULEURS.jaune : COULEURS.bleu) : COULEURS[couleurEcran];
+      for (let x = 0; x < 128; x++) {
+        const on = !eteint && (ram[(y >> 3) * 128 + x] >> (y & 7)) & 1;
+        const i = (y * 128 + x) * 4;
+        img.data[i] = on ? c[0] : 5; img.data[i + 1] = on ? c[1] : 7; img.data[i + 2] = on ? c[2] : 10; img.data[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    $('ecran-etat').textContent = eteint ? 'écran en veille' : '';
+  }
+  const nb = wasm.sim_nombre_leds();
+  const leds = $('leds');
+  while (leds.children.length < nb) { const d = document.createElement('div'); d.className = 'led'; leds.appendChild(d); }
+  while (leds.children.length > nb) leds.lastChild.remove();
+  const px = new Uint32Array(mem.buffer, wasm.sim_adr_leds(), nb);
+  for (let i = 0; i < nb; i++) {
+    const v = px[i], r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+    const el = leds.children[i];
+    if (el._v === v) continue;
+    el._v = v;
+    el.title = `LED ${i} : R${r} V${g} B${b}`;
+    if (!v) { el.style.backgroundColor = ''; el.style.boxShadow = ''; continue; }
+    const k = (x) => Math.round(255 * Math.pow(x / 255, 0.42));
+    const col = `rgb(${k(r)},${k(g)},${k(b)})`;
+    const force = Math.max(r, g, b) / 255;
+    el.style.backgroundColor = col;
+    el.style.boxShadow = `0 0 ${6 + 18 * force}px ${2 + 5 * force}px ${col}`;
+  }
+  const t = wasm.sim_temps();
+  $('horloge').textContent = fmt(t);
+  $('horloge-ms').textContent = 'millis() = ' + t;
+  const bz = buzzerPendantImage || buzzerAvant;
+  buzzerPendantImage = false;
+  $('buzzer').classList.toggle('actif', !!bz);
+  son(!!bz && !enPause);
+}
+function fmt(ms) {
+  const h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60, d = Math.floor(ms / 100) % 10;
+  return (h ? h + ':' : '') + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + '.' + d;
+}
+
+// ── Son ──
+let audio = null, gain = null;
+function preparerSon() {
+  if (audio) { if (audio.state === 'suspended') audio.resume(); return; }
+  try {
+    audio = new AudioContext();
+    const osc = audio.createOscillator(); osc.type = 'square'; osc.frequency.value = 2700;
+    gain = audio.createGain(); gain.gain.value = 0;
+    osc.connect(gain).connect(audio.destination); osc.start();
+  } catch (e) { audio = null; }
+}
+function son(on) { if (gain) gain.gain.setTargetAtTime(on && sonActif ? 0.06 : 0, audio.currentTime, 0.004); }
+
+// ── Boutons ──
+function couleurBouton(nom) { return /gauche|left|rouge|red/i.test(nom) ? 'rouge' : /droite|right|bleu|blue/i.test(nom) ? 'bleu' : ''; }
+function libelle(nom) { return nom.replace(/^(BP|BTN|Bouton|Button)_?/i, '') || nom; }
+function toucheDe(nom) { return /gauche|left/i.test(nom) ? ['ArrowLeft'] : /droite|right/i.test(nom) ? ['ArrowRight'] : /ok|valid|enter/i.test(nom) ? ['Enter', ' '] : []; }
+function maintenir(broche, source, oui) {
+  const s = sources.get(broche);
+  if (oui) s.add(source); else s.delete(source);
+  const etait = !!appuyes.get(broche), est = s.size > 0;
+  appuyes.set(broche, est);
+  if (wasm) wasm.sim_entree(broche, est ? 0 : 1);   // bouton câblé en pull-up : appuyé = niveau bas
+  const el = document.querySelector(`[data-broche="${broche}"]`);
+  el.classList.toggle('appuye', est);
+  el.setAttribute('aria-pressed', est);
+  const nom = CONFIG.boutons.find((b) => b.broche === broche).nom;
+  const maintenant = wasm ? Math.max(wasm.sim_temps(), Math.floor(tempsVirtuel)) : 0;
+  if (est && !etait) { el._debut = maintenant; journal(libelle(nom) + ' appuyé', 'appui', el._debut); }
+  if (!est && etait && wasm) journal(libelle(nom) + ' relâché après ' + ((maintenant - el._debut) / 1000).toFixed(1).replace('.', ',') + ' s', 'appui', maintenant);
+}
+function creerBoutons() {
+  const rangee = $('boutons');
+  const touches = {};
+  // Disposition de la vraie bombe : Gauche, OK au milieu, Droite
+  const rang = (n) => /gauche|left/i.test(n) ? 0 : /ok/i.test(n) ? 1 : /droite|right/i.test(n) ? 2 : 3;
+  const ordre = [...CONFIG.boutons].sort((x, y) => rang(x.nom) - rang(y.nom));
+  for (const b of ordre) {
+    sources.set(b.broche, new Set());
+    const bloc = document.createElement('div'); bloc.className = 'bouton-bloc';
+    const bp = document.createElement('button');
+    bp.className = 'bp ' + couleurBouton(b.nom); bp.dataset.broche = b.broche;
+    bp.textContent = /ok/i.test(b.nom) ? 'OK' : ''; bp.setAttribute('aria-label', libelle(b.nom)); bp.setAttribute('aria-pressed', 'false');
+    bp.addEventListener('pointerdown', (e) => { e.preventDefault(); preparerSon(); bp.setPointerCapture(e.pointerId); maintenir(b.broche, 'p' + e.pointerId, true); });
+    const lacher = (e) => maintenir(b.broche, 'p' + e.pointerId, false);
+    bp.addEventListener('pointerup', lacher); bp.addEventListener('pointercancel', lacher); bp.addEventListener('lostpointercapture', lacher);
+    bp.addEventListener('contextmenu', (e) => e.preventDefault());
+    bp.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); });
+    const nom = document.createElement('div'); nom.className = 'bp-nom';
+    const k = toucheDe(b.nom); const petit = document.createElement('small'); petit.textContent = 'broche ' + b.broche;
+    nom.append(libelle(b.nom), document.createElement('br'), petit);
+    const verrou = document.createElement('label'); verrou.className = 'verrou';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'verrou-' + b.broche;
+    cb.addEventListener('change', () => { preparerSon(); maintenir(b.broche, 'verrou', cb.checked); });
+    verrou.append(cb, 'Bloquer');
+    bloc.append(bp, nom, verrou); rangee.appendChild(bloc);
+    for (const t of k) touches[t] = b.broche;
+  }
+  addEventListener('keydown', (e) => {
+    if (!(e.key in touches) || e.target.closest('select')) return;
+    e.preventDefault(); preparerSon();
+    if (!e.repeat) maintenir(touches[e.key], 'k' + e.key, true);
+  }, { signal: arret.signal });
+  addEventListener('keyup', (e) => { if (e.key in touches) maintenir(touches[e.key], 'k' + e.key, false); }, { signal: arret.signal });
+  addEventListener('blur', () => { for (const [broche, s] of sources) for (const src of [...s]) if (src !== 'verrou') maintenir(broche, src, false); }, { signal: arret.signal });
+}
+
+// ── Journal ──
+const lignes = [];
+function journal(texte, type, t) {
+  const j = $('journal');
+  if (!lignes.length) j.textContent = '';
+  const d = document.createElement('div'); d.className = type;
+  const a = document.createElement('span'); a.textContent = fmt(t);
+  const b = document.createElement('span'); b.textContent = texte;
+  d.append(a, b); j.appendChild(d); lignes.push(d);
+  if (lignes.length > 400) lignes.shift().remove();
+  j.scrollTop = j.scrollHeight;
+  return d;
+}
+
+// ── Pupitre ──
+function creerPupitre() {
+  const v = $('vitesses');
+  for (const x of VITESSES) {
+    const b = document.createElement('button'); b.className = 'puce'; b.textContent = '×' + String(x).replace('.', ',');
+    b.setAttribute('aria-pressed', x === vitesse);
+    b.addEventListener('click', () => { vitesse = x; for (const c of v.children) c.setAttribute('aria-pressed', c === b); });
+    v.appendChild(b);
+  }
+  for (const id of ['pause', 'avance1', 'avance10', 'redemarrer', 'vider', 'periode', 'couleur', 'son']) { const el = $(id); el.replaceWith(el.cloneNode(true)); }
+  $('pause').addEventListener('click', () => { enPause = !enPause; $('pause').textContent = enPause ? 'Reprendre' : 'Pause'; });
+  $('avance1').addEventListener('click', () => avancer(60000));
+  $('avance10').addEventListener('click', () => avancer(600000));
+  $('redemarrer').addEventListener('click', () => { lignes.length = 0; $('journal').textContent = ''; allumer(); });
+  $('vider').addEventListener('click', () => { lignes.length = 0; $('journal').innerHTML = '<span class="vide">Journal vidé.</span>'; });
+  $('periode').addEventListener('change', (e) => { periode = +e.target.value; });
+  $('couleur').addEventListener('change', (e) => { couleurEcran = e.target.value; ecranVu = -1; });
+  $('son').addEventListener('change', (e) => { sonActif = e.target.value === 'on'; if (sonActif) preparerSon(); });
+  const d = new Date(CONFIG.date);
+  $('version').textContent = `${CONFIG.fichier} · ${CONFIG.lignes} lignes · empreinte ${CONFIG.empreinte} · compilé le ${d.toLocaleDateString('fr-FR')} à ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+// Si la page est mise à jour alors qu'elle est ouverte, on arrête l'ancienne bombe et on repart de conteneurs vides
+if (window.__arretBombe) window.__arretBombe();
+const arret = new AbortController();
+let actif = true;
+window.__arretBombe = () => { actif = false; arret.abort(); if (gain) gain.gain.value = 0; };
+for (const id of ['boutons', 'vitesses', 'leds']) $(id).textContent = '';
+creerBoutons();
+creerPupitre();
+allumer();
+requestAnimationFrame(image);
+</script>
