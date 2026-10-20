@@ -22,7 +22,7 @@ Ce lien pointe toujours vers la dernière version. La version du logiciel est é
 
 Le simulateur fait tourner le vrai code dans le navigateur, avec l'écran, les LEDs, le buzzer et les boutons :
 
-👉 **https://bearsoft-44.github.io/bombe/**
+👉 **https://bearsoft-44.github.io/Bombe/**
 
 La page se met à jour toute seule à chaque modification du code (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md)). Pour l'utiliser sans connexion, enregistrer la page depuis le navigateur (Ctrl+S) : c'est un seul fichier qui marche hors ligne.
 

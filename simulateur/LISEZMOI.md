@@ -16,7 +16,7 @@ Différences avec la vraie carte : `int` fait 32 bits ici au lieu de 16 sur le M
 
 **Il n'y a rien à faire.** Dès qu'une modification de `BombeV2_1/BombeV2_1.ino` (ou du dossier `simulateur/`) arrive sur la branche `main`, GitHub reconstruit le simulateur et republie la page en ligne tout seul, en 2 ou 3 minutes :
 
-👉 https://bearsoft-44.github.io/bombe/
+👉 https://bearsoft-44.github.io/Bombe/
 
 L'en-tête de la page affiche l'empreinte du code et la date de compilation, pour vérifier qu'on regarde bien la dernière version.
 
