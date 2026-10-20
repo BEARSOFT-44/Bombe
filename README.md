@@ -1,4 +1,10 @@
-# La Bombe – Bearsoft 44
+<p align="center">
+  <a href="https://bearsoft44.fr"><img src="images/banniere-bearsoft44.png" alt="Logo Bearsoft 44" width="420"></a>
+</p>
+
+<h1 align="center">La Bombe – Bearsoft 44</h1>
+
+<p align="center"><i>De l'airsoft à la cool, dans le sérieux le plus total. Have fun 🤙</i></p>
 
 Code et documentation de la « bombe » d'airsoft de l'asso : un boîtier Arduino avec écran, bandeau de LEDs, buzzer et trois boutons, qui propose plusieurs modes de jeu (BOMBE, CTF, MINE, PATATE).
 
@@ -21,6 +27,7 @@ On peut aussi télécharger `simulateur/simulateur-bombe.html` et l'ouvrir direc
 | `BombeV2_1/` | Le code à téléverser dans la bombe (`BombeV2_1.ino`). La liste des changements de chaque version est en haut du fichier. |
 | `notice/` | Le mode d'emploi pour les joueurs et les orgas, en Word (modifiable) et en PDF (à imprimer). |
 | `simulateur/` | Le simulateur web et ce qui sert à le fabriquer. Détails dans [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md). |
+| `images/` | Les logos de l'asso (bannière sur fond sombre, et logo seul sur fond transparent). |
 | `verification/simulation/` | Des tests automatiques qui rejouent des parties sur PC pour vérifier que les modes se comportent comme prévu. |
 
 ## Téléverser le code dans la bombe
