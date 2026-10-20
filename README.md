@@ -42,3 +42,7 @@ On peut aussi télécharger `simulateur/simulateur-bombe.html` et l'ouvrir direc
 - Avant de téléverser une modification, l'essayer dans le simulateur (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md) pour le reconstruire).
 - Pour les tests automatiques, sur un PC avec `g++` : `sh verification/simulation/lancer.sh`.
 - Penser à noter les changements en haut du `.ino` et à mettre à jour la notice.
+
+## Crédits
+
+Conception et code de la bombe : **Skitus** ([@Skitusss](https://github.com/Skitusss)), pour l'asso [Bearsoft 44](https://bearsoft44.fr).
