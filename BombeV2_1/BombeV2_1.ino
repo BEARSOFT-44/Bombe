@@ -30,7 +30,8 @@ Correction V2.1.2
   - Buzzer : nouvelle fonction LancerBip(durée) pour les bips ponctuels, prioritaire sur les bips propres aux modes
     (remplace BipDebutCTF et NouveauDiamant)
   - MINE : le premier diamant est compté à partir du vrai départ (après le délai)
-  - Suppression des prototypes RelacheGauche/RelacheDroite, jamais définis ni utilisés*/
+  - Suppression des prototypes RelacheGauche/RelacheDroite, jamais définis ni utilisés
+  - PATATE : sous 5 min, le bip ne saute plus de 500 ms à 1000 ms (durée = temps restant / 600 au lieu de / 300)*/
 // ======================================================
 // IMPORTATION DES BIBLIOTHÈQUES
 // ======================================================
@@ -792,7 +793,7 @@ void GererBuzzer() {
           } else if (BipPatate) {
             if      (TempsRestant >= 10L * 60 * 1000) { DureeBip = 500; IntervalleBip = 30000; }
             else if (TempsRestant >=  5L * 60 * 1000) { DureeBip = 500; IntervalleBip = 10000; }
-            else { DureeBip = TempsRestant / 300UL; IntervalleBip = TempsRestant / 60UL; }
+            else { DureeBip = TempsRestant / 600UL; IntervalleBip = TempsRestant / 60UL; } // /600 : 500 ms à 5 min, sans saut (comme la bombe)
             if  (Bip && TempsActuel >= DebutBip + DureeBip)    { Bip = false; FinBip = TempsActuel; }
             else if (!Bip && TempsActuel >= FinBip + IntervalleBip) { Bip = true; DebutBip = TempsActuel; }
           } else {
