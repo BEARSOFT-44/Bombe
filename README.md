@@ -12,6 +12,12 @@ Site officiel de l'asso : **[bearsoft44.fr](https://bearsoft44.fr)**
 
 Version actuelle : **V2.1.2**.
 
+## Mode d'emploi
+
+📄 **[Télécharger le mode d'emploi (PDF)](https://github.com/BEARSOFT-44/bombe/raw/main/notice/Mode_emploi_Bombe.pdf)** · [version Word](https://github.com/BEARSOFT-44/bombe/raw/main/notice/Mode_emploi_Bombe.docx)
+
+Ce lien pointe toujours vers la dernière version. La version du logiciel est écrite en bas de chaque page de la notice.
+
 ## Essayer sans la bombe
 
 Le simulateur fait tourner le vrai code dans le navigateur, avec l'écran, les LEDs, le buzzer et les boutons :
@@ -48,7 +54,7 @@ On peut aussi télécharger `simulateur/simulateur-bombe.html` et l'ouvrir direc
 
 - Avant de téléverser une modification, l'essayer dans le simulateur (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md) pour le reconstruire).
 - Pour les tests automatiques, sur un PC avec `g++` : `sh verification/simulation/lancer.sh`.
-- Penser à noter les changements en haut du `.ino` et à mettre à jour la notice.
+- Penser à noter les changements en haut du `.ino` et à mettre à jour la notice. Garder le même nom de fichier (`notice/Mode_emploi_Bombe.pdf` et `.docx`) : le site officiel pointe dessus, seule la version écrite dans le document change.
 
 ## Crédits
 
