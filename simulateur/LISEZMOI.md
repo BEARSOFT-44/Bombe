@@ -12,16 +12,31 @@ Le `.ino` est compilé tel quel en WebAssembly avec clang, comme le ferait l'IDE
 
 Différences avec la vraie carte : `int` fait 32 bits ici au lieu de 16 sur le Mega, et la durée d'un tour de `loop()` est un réglage de la page (20 ms par défaut) au lieu de dépendre du processeur.
 
-## Mettre à jour après une modification du code
+## Mise à jour du simulateur
 
-1. Demander à Claude dans le projet : « reconstruis le simulateur et republie-le ». Il lance :
-   ```sh
-   sh simulateur/construire.sh
-   ```
-   puis republie `simulateur-bombe.html` sur le même lien.
-2. Vérifier dans l'en-tête de la page que l'empreinte et la date de compilation ont changé.
+**Il n'y a rien à faire.** Dès qu'une modification de `BombeV2_1/BombeV2_1.ino` (ou du dossier `simulateur/`) arrive sur la branche `main`, GitHub reconstruit le simulateur et republie la page en ligne tout seul, en 2 ou 3 minutes :
 
-Sur un PC avec clang, wasm-ld et python3 : `sh construire.sh chemin/vers/sketch.ino sortie.html`, puis ouvrir le fichier HTML dans un navigateur.
+👉 https://bearsoft-44.github.io/bombe/
+
+L'en-tête de la page affiche l'empreinte du code et la date de compilation, pour vérifier qu'on regarde bien la dernière version.
+
+Pour suivre la reconstruction : onglet **Actions** du dépôt, ligne « Simulateur ». Une coche verte veut dire que la page est à jour. Une croix rouge veut dire que le code ne compile pas : cliquer dessus pour voir l'erreur (GitHub envoie aussi un mail à la personne qui a poussé la modification). On peut relancer à la main avec le bouton **Run workflow**.
+
+## Construire le simulateur sur son PC
+
+Utile pour essayer une modification avant de la pousser. Il faut Linux (ou WSL sous Windows) avec `clang`, `wasm-ld` et `python3`. Sous Ubuntu ou Debian :
+
+```sh
+sudo apt install clang lld python3
+```
+
+Puis, depuis la racine du dépôt :
+
+```sh
+sh simulateur/construire.sh
+```
+
+Le script crée `simulateur/simulateur-bombe.html` : l'ouvrir dans un navigateur. Ce fichier n'est pas enregistré dans le dépôt, puisque la version en ligne est refaite automatiquement. Pour un autre fichier de code : `sh simulateur/construire.sh chemin/vers/sketch.ino sortie.html`.
 
 Les polices utilisées par le code sont retrouvées automatiquement. Si une nouvelle police apparaît dans le `.ino`, le script la télécharge une fois depuis GitHub et la garde dans `vendor/polices_cache.c`. Les boutons (`EasyButton NOM(broche)`) et la broche du buzzer (constante dont le nom contient « buzz ») sont lus dans le code.
 

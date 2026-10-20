@@ -1,0 +1,47 @@
+# Reconstruit le simulateur et le publie sur GitHub Pages
+# à chaque modification du code de la bombe ou du simulateur.
+name: Simulateur
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "BombeV2_1/**"
+      - "simulateur/**"
+      - ".github/workflows/simulateur.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construire:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer clang et wasm-ld
+        run: sudo apt-get update && sudo apt-get install -y clang lld
+      - name: Construire la page du simulateur
+        run: |
+          mkdir -p site
+          sh simulateur/construire.sh BombeV2_1/BombeV2_1.ino site/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

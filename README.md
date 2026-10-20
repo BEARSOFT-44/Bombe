@@ -22,9 +22,9 @@ Ce lien pointe toujours vers la dernière version. La version du logiciel est é
 
 Le simulateur fait tourner le vrai code dans le navigateur, avec l'écran, les LEDs, le buzzer et les boutons :
 
-👉 **https://claude.ai/artifact/VVS2Nbts8f463BBhZvCEnE**
+👉 **https://bearsoft-44.github.io/bombe/**
 
-On peut aussi télécharger `simulateur/simulateur-bombe.html` et l'ouvrir directement dans un navigateur, sans connexion.
+La page se met à jour toute seule à chaque modification du code (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md)). Pour l'utiliser sans connexion, enregistrer la page depuis le navigateur (Ctrl+S) : c'est un seul fichier qui marche hors ligne.
 
 ## Ce qu'il y a dans chaque dossier
 
@@ -52,7 +52,7 @@ On peut aussi télécharger `simulateur/simulateur-bombe.html` et l'ouvrir direc
 
 ## Modifier le code
 
-- Avant de téléverser une modification, l'essayer dans le simulateur (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md) pour le reconstruire).
+- Avant de téléverser une modification, on peut l'essayer dans le simulateur en le construisant sur son PC (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md)). Une fois la modification poussée sur `main`, le simulateur en ligne se met à jour tout seul.
 - Pour les tests automatiques, sur un PC avec `g++` : `sh verification/simulation/lancer.sh`.
 - Penser à noter les changements en haut du `.ino` et à mettre à jour la notice. Garder le même nom de fichier (`notice/Mode_emploi_Bombe.pdf` et `.docx`) : le site officiel pointe dessus, seule la version écrite dans le document change.
 
