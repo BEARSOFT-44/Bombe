@@ -2,6 +2,8 @@
 
 Code et documentation de la « bombe » d'airsoft de l'asso : un boîtier Arduino avec écran, bandeau de LEDs, buzzer et trois boutons, qui propose plusieurs modes de jeu (BOMBE, CTF, MINE, PATATE).
 
+Site officiel de l'asso : **[bearsoft44.fr](https://bearsoft44.fr)**
+
 Version actuelle : **V2.1.2**.
 
 ## Essayer sans la bombe
