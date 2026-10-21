@@ -23,8 +23,8 @@ int main(){
   run(t0+305000);
   printf("CTF: ROUGE=%ds (attendu ~228) BLEU=%ds etat=%d\n", statCTFRouge, statCTFBleu, EtatActuel); dump("CTF (attendu départ ~61s 1000ms, fin 2000ms)");
   okLong();
-  // CTF sans délai, BipCTF=NON
-  BipCTF=false; DelaiDebutCTF=0; ok(); run(g_ms+5*60000+2000); dump("CTF BipCTF=NON (attendu aucun)"); okLong(); BipCTF=true;
+  // CTF sans délai : bips de départ et de fin toujours actifs
+  DelaiDebutCTF=0; ok(); run(g_ms+5*60000+2000); dump("CTF sans délai (attendu départ 1000 + fin 2000)"); okLong();
   // MINE délai 1 min, partie 10 min, diamant toutes les 1 min
   ModeJeu=MINE; TimerMine=10; IntervalleApparitionDiamant=1; TimerCaptureMine=15; DelaiDebutMine=1; ok(); t0=g_ms;
   run(t0+30000); tick(); printf("MINE attente: MineEnAttente=%d écran=%s\n", MineEnAttente, g_screen.c_str());
@@ -51,6 +51,7 @@ int main(){
   ModeJeu=PATATE_CHAUDE; TimerPatate=5; LatitudeRandom=15;
   for(int i=0;i<8;i++){ ok(); printf("%lu ", DureeCiblePatate/60000); EtatActuel=MENU_JEUX; } printf(" <- PATATE 5±15 durées (min), attendu 1..20\n");
   bips.clear(); ModeJeu=MINE; BipMine=false; IntervalleApparitionDiamant=1; DelaiDebutMine=0; TimerMine=5; ok(); run(g_ms+5*60000+3000); dump("MINE BipMine=NON (attendu aucun)"); okLong(); BipMine=true;
+  ModeJeu=CTF; EtatActuel=MENU_SETTINGS; PositionMenu=3; tick(); printf("Ecran settings CTF 3 : %s\n", g_screen.c_str());
   ModeJeu=MINE; EtatActuel=MENU_SETTINGS; PositionMenu=5; tick(); printf("Ecran settings MINE 5 : %s\n", g_screen.c_str());
   ModeJeu=MINE; EtatActuel=MENU_SETTINGS; PositionMenu=1; tick(); printf("Ecran settings MINE : %s\n", g_screen.c_str());
   ModeJeu=BOMBE; tick(); printf("Ecran settings BOMBE : %s\n", g_screen.c_str());

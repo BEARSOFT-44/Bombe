@@ -24,9 +24,9 @@ Correction V2.1.2
   - BOMBE : passage en fin de partie après l'explosion
   - PATATE : durée jamais négative (latitude > timer) et vraiment aléatoire (randomSeed)
   - Écran des réglages : le titre "SETTINGS BOMBE" ne se superpose plus aux autres modes
-  - Bips (chacun soumis au réglage bip de son mode) : départ et fin de partie CTF ("Bip CTF") et MINE
-    (nouveau réglage "Bip mine"), apparition d'un diamant ("Bip mine"), armement de la bombe ("Bip bombe").
-    Le bip de départ CTF sonne aussi sans délai de départ ; le réglage "Bip CTF", inutilisé jusque-là, sert désormais
+  - Bips : départ et fin de partie CTF (toujours actifs, avec ou sans délai de départ), départ, diamant et fin
+    de partie MINE (nouveau réglage "Bip mine"), armement de la bombe ("Bip bombe").
+    Le réglage "Bip CTF", qui ne servait à rien, est supprimé : le menu CTF passe à 3 paramètres
   - Buzzer : nouvelle fonction LancerBip(durée) pour les bips ponctuels, prioritaire sur les bips propres aux modes
     (remplace BipDebutCTF et NouveauDiamant)
   - MINE : le premier diamant est compté à partir du vrai départ (après le délai)
@@ -91,9 +91,8 @@ int  TimerExplosion    = 5000;
 // ── CTF ───────────────────────────────────────────────
 int  TimerCTF     = 30;
 int  TimerCapture = 20;
-bool BipCTF       = true;
 int  DelaiDebutCTF = 5;
-int  NbParamCTF   = 4; //A modifier si de nouveaux paramètres réglables sont ajoutés
+int  NbParamCTF   = 3; //A modifier si de nouveaux paramètres réglables sont ajoutés
 
 // ── PATATE CHAUDE ─────────────────────────────────────
 int  TimerPatate    = 30;
@@ -320,7 +319,7 @@ void loop() {
             if (TempsActuel >= DebutAttenteCTF + (unsigned long)DelaiDebutCTF * 1000UL * 60UL) {
               CTFEnAttente  = false;
               DebutCTF      = TempsActuel;
-              if (BipCTF) LancerBip(1000);
+              LancerBip(1000);
             }
           } else {
             // ---- Partie CTF normale ----
@@ -374,7 +373,7 @@ void loop() {
               else if (EquipeEnControle == BLEU)  CompteurBleu  += TempsActuel - DebutControle;
               statCTFRouge = CompteurRouge / 1000;
               statCTFBleu  = CompteurBleu  / 1000;
-              if (BipCTF) LancerBip(2000);
+              LancerBip(2000);
               EtatActuel   = FIN_DE_JEU;
             }
           }
@@ -496,8 +495,7 @@ void AppuiGauche() {
           switch (PositionMenu) {
             case 1: TimerCTF      = max(5,  TimerCTF - 5);       break;
             case 2: TimerCapture  = max(10, TimerCapture - 10);   break;
-            case 3: BipCTF        = !BipCTF;                      break;
-            case 4: DelaiDebutCTF = max(0,  DelaiDebutCTF - 1);   break;
+            case 3: DelaiDebutCTF = max(0,  DelaiDebutCTF - 1);   break;
           }
         break;
         case PATATE_CHAUDE:
@@ -558,8 +556,7 @@ void AppuiDroite() {
           switch (PositionMenu) {
             case 1: TimerCTF      = min(60,  TimerCTF + 5);        break;
             case 2: TimerCapture  = min(120, TimerCapture + 10);    break;
-            case 3: BipCTF        = !BipCTF;                        break;
-            case 4: DelaiDebutCTF = min(30,  DelaiDebutCTF + 1);    break;
+            case 3: DelaiDebutCTF = min(30,  DelaiDebutCTF + 1);    break;
           }
         break;
         case PATATE_CHAUDE:
@@ -616,7 +613,7 @@ void AppuiOK() {
           } else {
             CTFEnAttente = false;
             DebutCTF     = TempsActuel;
-            if (BipCTF) LancerBip(1000);
+            LancerBip(1000);
           }
           EtatActuel = EN_JEU;
         break;
@@ -886,10 +883,7 @@ void rafraichirEcran() {
             case 2: MonEcran.drawStr(0,30,"Timer capture:");
                     sprintf(buffer,"%d sec",TimerCapture);
                     MonEcran.setFont(u8g2_font_7x14_tr); MonEcran.drawStr(20,50,buffer); break;
-            case 3: MonEcran.drawStr(0,30,"Bip CTF:");
-                    MonEcran.setFont(u8g2_font_7x14_tr);
-                    MonEcran.drawStr(20,50,BipCTF?"OUI":"NON"); break;
-            case 4: MonEcran.drawStr(0,30,"Delai debut:");
+            case 3: MonEcran.drawStr(0,30,"Delai debut:");
                     sprintf(buffer,"%d min",DelaiDebutCTF);
                     MonEcran.setFont(u8g2_font_7x14_tr); MonEcran.drawStr(20,50,buffer); break;
           }
