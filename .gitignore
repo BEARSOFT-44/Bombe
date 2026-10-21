@@ -1,3 +1,10 @@
 verification/simulation/sketch.cpp
 verification/simulation/test
 simulateur/simulateur-bombe.html
+
+# KiCad : sauvegardes et réglages locaux
+*-backups/
+.history/
+*.kicad_prl
+*.bak
+fp-info-cache
