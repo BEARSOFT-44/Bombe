@@ -34,6 +34,7 @@ La page se met à jour toute seule à chaque modification du code (voir [`simula
 | `notice/` | Le mode d'emploi pour les joueurs et les orgas, en Word (modifiable) et en PDF (à imprimer). |
 | `simulateur/` | Le simulateur web et ce qui sert à le fabriquer. Détails dans [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md). |
 | `images/` | Les logos de l'asso (bannière sur fond sombre, et logo seul sur fond transparent). |
+| `docs/reference/` | Des documents d'Arduino pour l'électronique : le schéma de la carte Mega 2560 et le texte de l'*Arduino Projects Book*. Ils restent sous la licence d'Arduino, voir [`docs/reference/LISEZMOI.md`](docs/reference/LISEZMOI.md). |
 | `verification/simulation/` | Des tests automatiques qui rejouent des parties sur PC pour vérifier que les modes se comportent comme prévu. |
 
 ## Téléverser le code dans la bombe
