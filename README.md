@@ -30,7 +30,7 @@ La page se met à jour toute seule à chaque modification du code (voir [`simula
 
 | Dossier | À quoi ça sert |
 |---|---|
-| `BombeV2_1/` | Le code à téléverser dans la bombe (`BombeV2_1.ino`). La liste des changements de chaque version est en haut du fichier. |
+| `Bombe/` | Le code à téléverser dans la bombe (`Bombe.ino`). La liste des changements de chaque version est en haut du fichier. |
 | `notice/` | Le mode d'emploi pour les joueurs et les orgas, en Word (modifiable) et en PDF (à imprimer). |
 | `simulateur/` | Le simulateur web et ce qui sert à le fabriquer. Détails dans [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md). |
 | `images/` | Les logos de l'asso (bannière sur fond sombre, et logo seul sur fond transparent). |
@@ -47,7 +47,7 @@ La page se met à jour toute seule à chaque modification du code (voir [`simula
    - **Adafruit NeoPixel** (LEDs)
    - **EasyButton** (boutons)
 3. Télécharger ce dépôt (bouton vert **Code > Download ZIP**) et le dézipper.
-4. Ouvrir `BombeV2_1/BombeV2_1.ino` dans l'IDE Arduino. Le fichier doit rester dans un dossier qui porte le même nom, `BombeV2_1`.
+4. Ouvrir `Bombe/Bombe.ino` dans l'IDE Arduino. Le fichier doit rester dans un dossier qui porte le même nom, `Bombe` (règle de l'IDE Arduino). La version est écrite en haut du fichier et sur l'écran de démarrage, pas dans le nom du dossier.
 5. Brancher la bombe en USB, puis choisir :
    - **Outils > Type de carte > Arduino Mega or Mega 2560**
    - **Outils > Port** : le port qui apparaît quand on branche la bombe

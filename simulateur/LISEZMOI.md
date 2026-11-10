@@ -1,6 +1,6 @@
 # Simulateur de la bombe
 
-Page web qui fait tourner le vrai code `BombeV2_1/BombeV2_1.ino` : écran OLED, bandeau LED, buzzer et les trois boutons, avec une vitesse du temps réglable.
+Page web qui fait tourner le vrai code `Bombe/Bombe.ino` : écran OLED, bandeau LED, buzzer et les trois boutons, avec une vitesse du temps réglable.
 
 ## Comment c'est fait
 
@@ -14,7 +14,7 @@ Différences avec la vraie carte : `int` fait 32 bits ici au lieu de 16 sur le M
 
 ## Mise à jour du simulateur
 
-**Il n'y a rien à faire.** Dès qu'une modification de `BombeV2_1/BombeV2_1.ino` (ou du dossier `simulateur/`) arrive sur la branche `main`, GitHub reconstruit le simulateur et republie la page en ligne tout seul, en 2 ou 3 minutes :
+**Il n'y a rien à faire.** Dès qu'une modification de `Bombe/Bombe.ino` (ou du dossier `simulateur/`) arrive sur la branche `main`, GitHub reconstruit le simulateur et republie la page en ligne tout seul, en 2 ou 3 minutes :
 
 👉 https://bearsoft-44.github.io/Bombe/
 

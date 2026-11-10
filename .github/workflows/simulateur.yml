@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "BombeV2_1/**"
+      - "Bombe/**"
       - "simulateur/**"
       - ".github/workflows/simulateur.yml"
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
       - name: Construire la page du simulateur
         run: |
           mkdir -p site
-          sh simulateur/construire.sh BombeV2_1/BombeV2_1.ino site/index.html
+          sh simulateur/construire.sh Bombe/Bombe.ino site/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

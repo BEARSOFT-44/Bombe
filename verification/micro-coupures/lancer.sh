@@ -5,7 +5,7 @@
 cd "$(dirname "$0")"
 EB=../../simulateur/vendor/EasyButton
 TMP=$(mktemp -d)
-cp ../../BombeV2_1/BombeV2_1.ino "$TMP/sketch.cpp"
+cp ../../Bombe/Bombe.ino "$TMP/sketch.cpp"
 g++ -std=c++17 -w -Iinc -I"$EB" -include Arduino.h -DSRC="\"$TMP/sketch.cpp\"" \
     test.cpp "$EB/EasyButton.cpp" "$EB/EasyButtonBase.cpp" "$EB/Sequence.cpp" -o "$TMP/test" && "$TMP/test"
 CODE=$?

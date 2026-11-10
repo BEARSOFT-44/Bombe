@@ -4,7 +4,7 @@
 # Necessite : clang (cible wasm32), wasm-ld, python3. Aucune bibliotheque a installer.
 set -e
 ICI="$(cd "$(dirname "$0")" && pwd)"
-INO="${1:-$ICI/../BombeV2_1/BombeV2_1.ino}"
+INO="${1:-$ICI/../Bombe/Bombe.ino}"
 SORTIE="${2:-$ICI/simulateur-bombe.html}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
