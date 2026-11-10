@@ -31,7 +31,13 @@ Correction V2.1.2
     (remplace BipDebutCTF et NouveauDiamant)
   - MINE : le premier diamant est compté à partir du vrai départ (après le délai)
   - Suppression des prototypes RelacheGauche/RelacheDroite, jamais définis ni utilisés
-  - PATATE : sous 5 min, le bip ne saute plus de 500 ms à 1000 ms (durée = temps restant / 600 au lieu de / 300)*/
+  - PATATE : sous 5 min, le bip ne saute plus de 500 ms à 1000 ms (durée = temps restant / 600 au lieu de / 300)
+
+Version V2.2
+  - Boutons : une micro-coupure du contact (moins de 300 ms, réglable avec ToleranceRelache) n'annule plus
+    la capture CTF, la capture MINE ni le désamorçage sans code. Avant, une seule lecture "relâché" suffisait
+    à tout remettre à zéro, ce qui arrivait en partie sur une bombe au câblage un peu fragile.
+  - BOMBE sans code : le désamorçage ne peut se terminer que s'il a bien été commencé (DesamorcageEnCours)*/
 // ======================================================
 // IMPORTATION DES BIBLIOTHÈQUES
 // ======================================================
@@ -62,6 +68,10 @@ const int Buzzer = 32;
 
 unsigned long AncienTemps = 0;
 const long intervalle = 100;
+// Tolérance au relâchement des boutons pendant un maintien (capture CTF, capture MINE, désamorçage BOMBE).
+// EasyButton prend en compte une seule lecture "relâché" : une micro-coupure du contact (soudure, bouton,
+// fil) annulait donc toute la capture. Un relâchement plus court que ToleranceRelache est maintenant ignoré.
+const unsigned long ToleranceRelache = 300; // ms
 
 // ======================================================
 // CRÉATION DES OBJETS
@@ -239,9 +249,9 @@ void setup() {
   MonEcran.drawHLine(departTraitDroit, hauteurTrait, longueurTraitDroit);
 
   MonEcran.setFont(u8g2_font_pressstart2p_8f);
-  int largeurtexte3 = MonEcran.getStrWidth("V2.1 by SKITUS");
+  int largeurtexte3 = MonEcran.getStrWidth("V2.2 by SKITUS");
   int x3 = (128 - largeurtexte3) / 2;
-  MonEcran.drawStr(x3, 60, "V2.1 by SKITUS");
+  MonEcran.drawStr(x3, 60, "V2.2 by SKITUS");
   MonEcran.sendBuffer();
   delay(3000);
 
@@ -292,12 +302,12 @@ void loop() {
               BombeExplosee  = true;
             }
             if (!BesoinCode) {
-              if (!BPOK.isPressed()) {
+              if (BPOK.releasedFor(ToleranceRelache)) {
                 DesamorcageEnCours = false;
-              } else if (!DesamorcageEnCours) {
+              } else if (BPOK.isPressed() && !DesamorcageEnCours) {
                 DesamorcageEnCours = true;
                 DebutDesamorcage   = TempsActuel;
-              } else if (TempsActuel >= DebutDesamorcage + TimerDesamorcage * 1000UL) {
+              } else if (DesamorcageEnCours && TempsActuel >= DebutDesamorcage + TimerDesamorcage * 1000UL) {
                 DesamorcageEnCours = false;
                 BombeAmorcee       = false;
                 statTempsRestant   = TempsRestant;
@@ -342,7 +352,7 @@ void loop() {
                     DebutCapture     = TempsActuel;
                   }
                 }
-                if (!BPGauche.isPressed()) {
+                if (BPGauche.releasedFor(ToleranceRelache)) {
                   EnCaptureGauche = false;
                 }
               }
@@ -363,7 +373,7 @@ void loop() {
                     DebutCapture     = TempsActuel;
                   }
                 }
-                if (!BPDroite.isPressed()) {
+                if (BPDroite.releasedFor(ToleranceRelache)) {
                   EnCaptureDroite = false;
                 }
               }
@@ -426,8 +436,8 @@ void loop() {
                 DebutCaptureMine    = TempsActuel;
               }
               // Relâcher le bouton annule la capture
-              if (EnCaptureMineGauche && !BPGauche.isPressed()) EnCaptureMineGauche = false;
-              if (EnCaptureMineDroite && !BPDroite.isPressed()) EnCaptureMineDroite = false;
+              if (EnCaptureMineGauche && BPGauche.releasedFor(ToleranceRelache)) EnCaptureMineGauche = false;
+              if (EnCaptureMineDroite && BPDroite.releasedFor(ToleranceRelache)) EnCaptureMineDroite = false;
 
               if (EnCaptureMineGauche && TempsActuel >= DebutCaptureMine + (unsigned long)TimerCaptureMine * 1000UL) {
                 CompteurDiamantsRouge++;

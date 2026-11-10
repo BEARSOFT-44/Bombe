@@ -10,7 +10,7 @@ Code et documentation de la « bombe » d'airsoft de l'asso : un boîtier Arduin
 
 Site officiel de l'asso : **[bearsoft44.fr](https://bearsoft44.fr)**
 
-Version actuelle : **V2.1.2**.
+Version actuelle : **V2.2**.
 
 ## Mode d'emploi
 
@@ -37,6 +37,7 @@ La page se met à jour toute seule à chaque modification du code (voir [`simula
 | `cablage/` | Le schéma de câblage de la bombe, par Skitus : [en PDF](cablage/cablage_bombe.pdf), et le projet KiCad pour le modifier ([`cablage/LISEZMOI.md`](cablage/LISEZMOI.md)). |
 | `docs/reference/` | Des documents d'Arduino pour l'électronique : le schéma de la carte Mega 2560 et le texte de l'*Arduino Projects Book*. Ils restent sous la licence d'Arduino, voir [`docs/reference/LISEZMOI.md`](docs/reference/LISEZMOI.md). |
 | `verification/simulation/` | Des tests automatiques qui rejouent des parties sur PC pour vérifier que les modes se comportent comme prévu. |
+| `verification/micro-coupures/` | Un test qui simule de très courtes coupures d'un bouton maintenu (faux contact) pour vérifier que les captures et le désamorçage vont quand même au bout. |
 
 ## Téléverser le code dans la bombe
 
@@ -55,7 +56,7 @@ La page se met à jour toute seule à chaque modification du code (voir [`simula
 ## Modifier le code
 
 - Avant de téléverser une modification, on peut l'essayer dans le simulateur en le construisant sur son PC (voir [`simulateur/LISEZMOI.md`](simulateur/LISEZMOI.md)). Une fois la modification poussée sur `main`, le simulateur en ligne se met à jour tout seul.
-- Pour les tests automatiques, sur un PC avec `g++` : `sh verification/simulation/lancer.sh`.
+- Pour les tests automatiques, sur un PC avec `g++` : `sh verification/simulation/lancer.sh` (les modes de jeu) et `sh verification/micro-coupures/lancer.sh` (les boutons maintenus malgré un faux contact).
 - Penser à noter les changements en haut du `.ino` et à mettre à jour la notice. Garder le même nom de fichier (`notice/Mode_emploi_Bombe.pdf` et `.docx`) : le site officiel pointe dessus, seule la version écrite dans le document change.
 
 ## Crédits
